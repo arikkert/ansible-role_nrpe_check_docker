@@ -17,10 +17,10 @@ vars:
 
 e.g. these can be the hostvars for host docker01
 
-containers:
-- hello_world
-- pihole
-- guacamole
+    containers:
+    - hello_world
+    - pihole
+    - guacamole
 
 Dependencies
 ------------
