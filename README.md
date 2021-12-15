@@ -15,7 +15,7 @@ vars:
 
 - *containers*: list of docker containers that should run on target host
 
-e.g. these can be the hostvars for host docker01
+e.g. This can be the hostvar for host docker01
 
     containers:
     - hello_world
