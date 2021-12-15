@@ -1,0 +1,120 @@
+#
+# Op docker01 gezorgd dat ik deze .pp kon maken, zodat ik die ook op andere docker hosts kan uitvoeren
+# de source .te wordt gemaakt en is hier bewaard, maar is niet nodig om de policy ongewijzigd te applyen
+#
+
+[root@docker01 nrpe.d]# tail -f /var/log/audit/audit.log | grep sock
+type=AVC msg=audit(1633587971.728:19368): avc:  denied  { connectto } for  pid=10810 comm="check_docker" path="/run/docker.sock" scontext=system_u:system_r:nrpe_t:s0 tcontext=system_u:system_r:container_runtime_t:s0 tclass=unix_stream_socket permissive=0
+type=AVC msg=audit(1633588014.367:19369): avc:  denied  { connectto } for  pid=10988 comm="check_docker" path="/run/docker.sock" scontext=system_u:system_r:nrpe_t:s0 tcontext=system_u:system_r:container_runtime_t:s0 tclass=unix_stream_socket permissive=0
+^C
+[root@docker01 nrpe.d]# sealert -a /var/log/audit/audit.log
+ 92% donetype=AVC msg=audit(1633557576.63:18174): avc:  denied  { read } for  pid=11979 comm="check_docker" name="docker.sock" dev="tmpfs" ino=22352 scontext=system_u:system_r:nrpe_t:s0 tcontext=system_u:object_r:container_var_run_t:s0 tclass=sock_file permissive=0
+ 
+**** Invalid AVC allowed in current policy ***
+
+ 99% donetype=AVC msg=audit(1633586948.215:19208): avc:  denied  { read } for  pid=6297 comm="check_docker" name="docker.sock" dev="tmpfs" ino=22352 scontext=system_u:system_r:nrpe_t:s0 tcontext=system_u:object_r:container_var_run_t:s0 tclass=sock_file permissive=0
+ 
+**** Invalid AVC allowed in current policy ***
+
+100% done
+ type=AVC msg=audit(1633587111.389:19232): avc:  denied  { read } for  pid=6995 comm="check_docker" name="docker.sock" dev="tmpfs" ino=22352 scontext=system_u:system_r:nrpe_t:s0 tcontext=system_u:object_r:container_var_run_t:s0 tclass=sock_file permissive=0
+ 
+**** Invalid AVC allowed in current policy ***
+
+100% done
+found 1 alerts in /var/log/audit/audit.log
+--------------------------------------------------------------------------------
+
+SELinux is preventing /usr/bin/python3.6 from connectto access on the unix_stream_socket /run/docker.sock.
+
+*****  Plugin catchall_boolean (89.3 confidence) suggests   ******************
+
+If you want to allow daemons to enable cluster mode
+Then you must tell SELinux about this by enabling the 'daemons_enable_cluster_mode' boolean.
+
+Do
+setsebool -P daemons_enable_cluster_mode 1
+
+*****  Plugin catchall (11.6 confidence) suggests   **************************
+
+If you believe that python3.6 should be allowed connectto access on the docker.sock unix_stream_socket by default.
+Then you should report this as a bug.
+You can generate a local policy module to allow this access.
+Do
+allow this access for now by executing:
+# ausearch -c 'check_docker' --raw | audit2allow -M my-checkdocker
+# semodule -i my-checkdocker.pp
+
+
+Additional Information:
+Source Context                system_u:system_r:nrpe_t:s0
+Target Context                system_u:system_r:container_runtime_t:s0
+Target Objects                /run/docker.sock [ unix_stream_socket ]
+Source                        check_docker
+Source Path                   /usr/bin/python3.6
+Port                          <Unknown>
+Host                          <Unknown>
+Source RPM Packages           python3-3.6.8-18.el7.x86_64
+Target RPM Packages           
+Policy RPM                    selinux-policy-3.13.1-268.el7_9.2.noarch
+Selinux Enabled               True
+Policy Type                   targeted
+Enforcing Mode                Enforcing
+Host Name                     docker01
+Platform                      Linux docker01 3.10.0-1160.42.2.el7.x86_64 #1 SMP
+                              Tue Sep 7 14:49:57 UTC 2021 x86_64 x86_64
+Alert Count                   2
+First Seen                    2021-10-07 08:26:11 CEST
+Last Seen                     2021-10-07 08:26:54 CEST
+Local ID                      62d821f5-352e-4bb4-bd72-4453175e7b82
+
+Raw Audit Messages
+type=AVC msg=audit(1633588014.367:19369): avc:  denied  { connectto } for  pid=10988 comm="check_docker" path="/run/docker.sock" scontext=system_u:system_r:nrpe_t:s0 tcontext=system_u:system_r:container_runtime_t:s0 tclass=unix_stream_socket permissive=0
+
+
+type=SYSCALL msg=audit(1633588014.367:19369): arch=x86_64 syscall=connect success=no exit=EACCES a0=3 a1=7fff8536d160 a2=16 a3=47 items=0 ppid=10987 pid=10988 auid=4294967295 uid=996 gid=992 euid=996 suid=996 fsuid=996 egid=992 sgid=992 fsgid=992 tty=(none) ses=4294967295 comm=check_docker exe=/usr/bin/python3.6 subj=system_u:system_r:nrpe_t:s0 key=(null)
+
+Hash: check_docker,nrpe_t,container_runtime_t,unix_stream_socket,connectto
+
+[root@docker01 nrpe.d]# ausearch -c 'check_docker' --raw | audit2allow -M my-checkdocker
+******************** IMPORTANT ***********************
+To make this policy package active, execute:
+
+semodule -i my-checkdocker.pp
+
+[root@docker01 nrpe.d]# vim my-checkdocker.te
+[root@docker01 nrpe.d]# vim my-checkdocker.te
+[root@docker01 nrpe.d]# vim my-checkdocker.te
+[root@docker01 nrpe.d]# restorecon -R -v /run/docker.sock
+[root@docker01 nrpe.d]# ausearch -c 'check_docker' --raw | audit2allow -M my-checkdocker
+******************** IMPORTANT ***********************
+To make this policy package active, execute:
+
+semodule -i my-checkdocker.pp
+
+[root@docker01 nrpe.d]#  semodule -i my-checkdocker.pp
+[root@docker01 nrpe.d]# tail -f /var/log/audit/audit.log | grep sock
+type=AVC msg=audit(1633588014.367:19369): avc:  denied  { connectto } for  pid=10988 comm="check_docker" path="/run/docker.sock" scontext=system_u:system_r:nrpe_t:s0 tcontext=system_u:system_r:container_runtime_t:s0 tclass=unix_stream_socket permissive=0
+type=AVC msg=audit(1633588129.158:19370): avc:  denied  { connectto } for  pid=11497 comm="check_docker" path="/run/docker.sock" scontext=system_u:system_r:nrpe_t:s0 tcontext=system_u:system_r:container_runtime_t:s0 tclass=unix_stream_socket permissive=0
+^C
+[root@docker01 nrpe.d]# ls -l
+total 24
+-rw-r--r--. 1 root root   64 Oct  5 20:42 allowed_hosts.cfg
+-rw-r--r--. 1 root root  125 Oct  6 21:27 check_docker.cfg
+-rw-r--r--. 1 root root  117 Oct  6 13:13 check_sestatus.cfg
+-rw-r--r--. 1 root root  960 Oct  5 20:42 extra.cfg
+-rw-r--r--. 1 root root 1267 Oct  7 08:28 my-checkdocker.pp
+-rw-r--r--. 1 root root  564 Oct  7 08:28 my-checkdocker.te
+[root@docker01 nrpe.d]# vim my-checkdocker.te
+[root@docker01 nrpe.d]# ls -l /run/docker.sock 
+srw-rw----. 1 root docker 0 Oct  6 19:47 /run/docker.sock
+[root@docker01 nrpe.d]# ls -lZ /run/docker.sock 
+srw-rw----. root docker system_u:object_r:container_var_run_t:s0 /run/docker.sock
+[root@docker01 nrpe.d]# pwd
+/etc/nrpe.d
+You have new mail in /var/spool/mail/root
+[root@docker01 nrpe.d]# cp -ip /usr/lib64/nagios/plugins/check_docker /usr/lib64/nagios/plugins/check_docker.ok
+[root@docker01 nrpe.d]# history |grep boolean
+  590  seboolean nagios_run_sudo 
+  750  history |grep boolean
+[root@docker01 nrpe.d]# 

@@ -1,0 +1,20 @@
+
+module my-checkdocker 1.0;
+
+require {
+	type nrpe_t;
+	type container_var_run_t;
+	type container_runtime_t;
+	class sock_file read;
+	class unix_stream_socket connectto;
+}
+
+#============= nrpe_t ==============
+
+#!!!! The file '/run/docker.sock' is mislabeled on your system.  
+#!!!! Fix with $ restorecon -R -v /run/docker.sock
+#!!!! This avc can be allowed using the boolean 'daemons_enable_cluster_mode'
+allow nrpe_t container_runtime_t:unix_stream_socket connectto;
+
+#!!!! This avc is allowed in the current policy
+allow nrpe_t container_var_run_t:sock_file read;
