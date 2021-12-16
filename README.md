@@ -30,15 +30,14 @@ Dependencies
 Example Playbook
 ----------------
 
-the var containers is optional and can be defined as host_var.
-Note that the role is only useful if this var is defined.
-Else there will be nothing to check.
+the var *containers* is optional and can be defined as host_var.  
+Note that the role is only useful if this var is defined.  
+Else there will be nothing to check.  
+*arikkert.nrpe_check_docker* will install *arikkert.role_nrpe* as dependency
 
     - hosts: docker01
       roles:
-        - role: role_nrpe
-          when: containers is defined
-        - role: role_nrpe_check_podman
+        - role: arikkert.nrpe_check_podman
           when: containers is defined
 
 Example of a script that uses this role : https://github.com/arikkert/ansible-docker
