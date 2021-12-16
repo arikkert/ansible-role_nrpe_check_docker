@@ -31,7 +31,7 @@ Example Playbook
 ----------------
 
 the var containers is optional and can be defined as host_var.
-Note that the role is only useful as this var is defined.
+Note that the role is only useful if this var is defined.
 Else there will be nothing to check.
 
     - hosts: docker01
@@ -41,7 +41,7 @@ Else there will be nothing to check.
         - role: role_nrpe_check_podman
           when: containers is defined
 
-Script that uses this role : https://github.com/arikkert/ansible-docker
+Example of a script that uses this role : https://github.com/arikkert/ansible-docker
 
 License
 -------
