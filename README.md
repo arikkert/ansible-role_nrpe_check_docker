@@ -3,6 +3,8 @@ Role Name
 
 Nagios NRPE for checking running docker containers
 
+Galaxy : yes
+
 Requirements
 ------------
 
