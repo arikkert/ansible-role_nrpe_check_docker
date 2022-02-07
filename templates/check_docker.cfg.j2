@@ -1,2 +1,2 @@
-# File managed by Ansible : role_thuis_nrpe_check_docker
+# File managed by Ansible
 command[check_docker_containers]=/usr/bin/sudo /usr/lib64/nagios/plugins/check_docker {%if containers is defined %}--containers{% for container in containers %} {{ container }}{% endfor %}{% endif %} --present --status running
