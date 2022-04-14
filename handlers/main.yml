@@ -1,6 +1,6 @@
 ---
 # handlers file for role_nrpe_check_docker
 - name: nrpe reload
-  service:
+  ansible.builtin.service:
     name: nrpe
     state: reloaded
