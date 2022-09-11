@@ -1,12 +1,12 @@
 ---
 # tasks file for role_nrpe_check_docker
 
-- name: ensure check_docker is installed
+- name: Ensure check_docker is installed
   ansible.builtin.copy:
     src: check_docker
     dest: /usr/lib64/nagios/plugins/
     mode: '0755'
-- name: ensure check_docker.cfg is installed
+- name: Ensure check_docker.cfg is installed
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: /etc/nrpe.d/{{ item }}
@@ -16,7 +16,7 @@
   loop:
     - check_docker.cfg
   notify: nrpe reload
-- name: ensure 10_nrpe is installed
+- name: Ensure 10_nrpe is installed
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: /etc/sudoers.d/
@@ -24,17 +24,17 @@
     validate: visudo -cf %s
   loop:
     - 10_nrpe
-- name: ensure selinux policy is applied - part 01
+- name: Ensure selinux policy is applied - part 01
   ansible.builtin.seboolean:
     name: nagios_run_sudo
     state: true
     persistent: true
-- name: ensure selinux policy is applied - part 02a
+- name: Ensure selinux policy is applied - part 02a
   ansible.builtin.copy:
     src: my-checkdocker.pp
     dest: /var/tmp/
     mode: '0400'
-- name: ensure selinux policy is applied - part 02b
+- name: Ensure selinux policy is applied - part 02b
   ansible.builtin.command: semodule -i /var/tmp/my-checkdocker.pp
   when: false  # TODO idempotent maken. Tot dan deze conditie verwijderen bij nieuwe target host
 
