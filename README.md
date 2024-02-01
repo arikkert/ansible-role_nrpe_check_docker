@@ -39,7 +39,7 @@ Else there will be nothing to check.
 
     - hosts: docker01
       roles:
-        - role: arikkert.nrpe_check_podman
+        - role: arikkert.nrpe_check_docker
           when: containers is defined
 
 Example of a script that uses this role : https://github.com/arikkert/ansible-dockerhost
